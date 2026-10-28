@@ -17,7 +17,7 @@ npm run dev
 
 The original homepage's content is reorganized into a clearer journey: local introduction, seller and buyer guidance, home search, gallery, services, and contact. The split hero gives the Pahrump landscape room to breathe while keeping the primary action visible on both desktop and mobile.
 
-The photo gallery scrolls by touch, trackpad, keyboard, or arrow buttons. Selecting a photo opens the original image in an accessible modal. The footer links to the Facebook, Instagram, and LinkedIn profiles linked from the reference site. A compact grayscale map of the supplied office location sits beside the contact details.
+The photo gallery scrolls by touch, trackpad, keyboard, or arrow buttons. Selecting a photo opens the original image in an accessible modal. The footer links to the Facebook, Instagram, and LinkedIn profiles linked from the reference site. A compact grayscale map with a green office pin sits beside the contact details and opens the supplied Google Maps location.
 
 The listing link opens current Pahrump listings on Realtor.com. The search and contact forms open the visitor's email app with details filled in; this static demo does not submit to a backend.
 
