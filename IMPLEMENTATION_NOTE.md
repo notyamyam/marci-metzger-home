@@ -4,7 +4,7 @@
 
 I built the homepage with **React** and **JavaScript**, used **Vite** for local development and the production build, and styled the page with **Tailwind CSS v4**. I downloaded the property, landscape, portrait, and brand images from the reference website and kept them as local assets. The finished page is deployed on **Vercel**.
 
-I used native browser features for the main interactions. The gallery supports touch and trackpad swiping with scroll snapping, plus arrow buttons for mouse and keyboard users. Clicking a photo opens the original image in a modal on the same page. The contact and search forms prepare an email with the visitor's details; this static project does not use a backend. The social links and office map remain available, and the map opens the supplied Google Maps location.
+I used native browser features for the main interactions. The gallery uses the seven photos from the reference homepage and supports touch swiping, mouse dragging, trackpad scrolling, and arrow buttons. Clicking a photo opens the original image in a modal on the same page. The contact and search forms prepare an email with the visitor's details; this static project does not use a backend. The social links and office map remain available, and the map opens the supplied Google Maps location.
 
 ## Design decision and improvement
 

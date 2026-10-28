@@ -31,10 +31,13 @@ const services = [
 ]
 
 const gallery = [
-  { image: '/images/pond.jpg', alt: 'Mountain Falls pond and mountains in Pahrump', label: 'Pahrump living' },
-  { image: '/images/buying.jpg', alt: 'Southwestern home beside a pool', label: 'Space to settle in' },
-  { image: '/images/selling.jpg', alt: 'Open-plan home interior', label: 'Spaces to love' },
-  { image: '/images/search.jpg', alt: 'House key resting on a wooden surface', label: 'The keys to what’s next' },
+  { image: '/images/gallery-roseworthy-52.jpg', alt: 'Aerial view of a Pahrump golf course, clubhouse, and mountains', label: 'Pahrump from above' },
+  { image: '/images/gallery-ailanto-14.jpg', alt: 'Red leather chair in a bright sunroom with large windows', label: 'A light-filled retreat' },
+  { image: '/images/gallery-ailanto-45.jpg', alt: 'Aerial view of Pahrump homes with mountains beyond', label: 'Homes with mountain views' },
+  { image: '/images/gallery-ailanto-50.jpg', alt: 'Aerial view of a home with a backyard pool and mountain views', label: 'Poolside living' },
+  { image: '/images/gallery-beacon-ridge-54.jpg', alt: 'Aerial view of community courts and clubhouse with mountains beyond', label: 'Community spaces' },
+  { image: '/images/gallery-beacon-ridge-53.jpg', alt: 'Aerial view of tennis courts and open space in Pahrump', label: 'Courts and open space' },
+  { image: '/images/gallery-beacon-ridge-41.jpg', alt: 'Aerial view of homes beside a pond and golf course', label: 'Pondside neighborhood' },
 ]
 
 function Arrow({ diagonal = false }) {
@@ -185,6 +188,7 @@ function FindHome() {
 
 function Gallery() {
   const track = React.useRef(null)
+  const drag = React.useRef(null)
   const dialog = React.useRef(null)
   const previousOverflow = React.useRef('')
   const [activePhoto, setActivePhoto] = React.useState(null)
@@ -192,6 +196,42 @@ function Gallery() {
   function move(direction) {
     const element = track.current
     element.scrollBy({ left: direction * (element.children[1].offsetLeft - element.children[0].offsetLeft), behavior: 'smooth' })
+  }
+
+  function startDrag(event) {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return
+    drag.current = { x: event.clientX, left: track.current.scrollLeft, moved: false }
+  }
+
+  function dragGallery(event) {
+    const state = drag.current
+    if (!state) return
+    const distance = event.clientX - state.x
+    if (!state.moved && Math.abs(distance) > 6) {
+      state.moved = true
+      track.current.classList.add('is-dragging')
+      track.current.setPointerCapture(event.pointerId)
+    }
+    if (state.moved) {
+      event.preventDefault()
+      track.current.scrollLeft = state.left - distance
+    }
+  }
+
+  function stopDrag(event) {
+    const state = drag.current
+    if (!state) return
+    track.current.classList.remove('is-dragging')
+    if (track.current.hasPointerCapture(event.pointerId)) track.current.releasePointerCapture(event.pointerId)
+    if (state.moved) window.setTimeout(() => { if (drag.current === state) drag.current = null }, 0)
+    else drag.current = null
+  }
+
+  function preventDragClick(event) {
+    if (!drag.current?.moved) return
+    event.preventDefault()
+    event.stopPropagation()
+    drag.current = null
   }
 
   function openPhoto(index) {
@@ -214,11 +254,11 @@ function Gallery() {
   return (
     <section id="gallery" className="section-wrap py-24 lg:py-30">
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4"><div><p className="eyebrow mb-4">Around the valley</p><h2 className="section-title">Photo <em className="text-[#ad785b]">gallery.</em></h2></div><p className="max-w-[300px] text-sm leading-7 text-[#606a61]">A glimpse of the places and spaces that make a house feel like home.</p></div>
-      <div ref={track} tabIndex={0} role="region" aria-label="Photo gallery. Swipe or use the arrow buttons to browse." className="gallery-track flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2">
-        {gallery.map(({ image, alt, label }, index) => <button key={image} type="button" onClick={() => openPhoto(index)} className="group relative block h-[270px] w-[78vw] max-w-[650px] shrink-0 snap-start overflow-hidden bg-[#deded5] text-left sm:h-[350px] sm:w-[64vw] lg:h-[420px] lg:w-[48%]" aria-label={`Open photo: ${label}`}><img src={image} alt={alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" /><span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-6 pt-12 pb-5 text-sm font-semibold text-white">{label} <span aria-hidden="true" className="float-right">↗</span></span></button>)}
+      <div ref={track} tabIndex={0} role="region" aria-label="Photo gallery. Drag, swipe, or use the arrow buttons to browse." onPointerDown={startDrag} onPointerMove={dragGallery} onPointerUp={stopDrag} onPointerCancel={stopDrag} onClickCapture={preventDragClick} className="gallery-track flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto pb-2 select-none">
+        {gallery.map(({ image, alt, label }, index) => <button key={image} type="button" onClick={() => openPhoto(index)} className="group relative block h-[270px] w-[78vw] max-w-[650px] shrink-0 snap-start overflow-hidden bg-[#deded5] text-left sm:h-[350px] sm:w-[64vw] lg:h-[420px] lg:w-[48%]" aria-label={`Open photo: ${label}`}><img src={image} alt={alt} loading="lazy" draggable={false} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" /><span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-6 pt-12 pb-5 text-sm font-semibold text-white">{label} <span aria-hidden="true" className="float-right">↗</span></span></button>)}
       </div>
       <div className="mt-5 flex items-center justify-between gap-4">
-        <p className="text-xs tracking-[0.08em] text-[#68736a]">Swipe to explore the gallery</p>
+        <p className="text-xs tracking-[0.08em] text-[#68736a]">Drag or swipe to explore the gallery</p>
         <div className="flex gap-2">
           <button type="button" onClick={() => move(-1)} aria-label="Previous gallery photo" className="h-11 w-11 border border-[#aeb7aa] text-lg text-[#1e352e] hover:bg-[#eae7de]">←</button>
           <button type="button" onClick={() => move(1)} aria-label="Next gallery photo" className="h-11 w-11 border border-[#aeb7aa] text-lg text-[#1e352e] hover:bg-[#eae7de]">→</button>
